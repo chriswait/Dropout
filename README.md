@@ -18,7 +18,6 @@ By default:
 # Configuration
 ## Network
 host = "www.google.com.au"
-timeout_seconds = 5
 period = 5
 ## Logging
 log_path = 'log.csv'
