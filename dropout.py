@@ -11,12 +11,12 @@ period = 5
 log_path = 'log.csv'
 csv_row_format = "%i,%i"
 log_failures = False
-log_changes = False
-log_all = True
+log_changes = True
+log_all = False
 ## Output
-output_failures = False
+output_failures = True
 output_changes = False
-output_all = True
+output_all = False
 
 def internet_on():
     conn = HTTPConnection(host)
