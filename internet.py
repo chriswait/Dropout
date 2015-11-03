@@ -1,8 +1,7 @@
 #!/usr/local/bin/python
-import urllib2
 import httplib
 import time
-
+import sys
 
 # Network
 host = "www.google.com.au"
@@ -32,16 +31,20 @@ def internet_on():
         return False
 
 def should_output(state):
-        return ((output_all) or (output_changes and state != previous_state) or (output_failures and state == False))
+    return ((output_all) or (output_changes and state != previous_state) or (output_failures and state == False))
 
 def should_log(state):
-        return ((log_all) or (log_changes and state != previous_state) or (log_failures and state == False))
+    return ((log_all) or (log_changes and state != previous_state) or (log_failures and state == False))
 
 while True:
     with open(log_path, 'a') as csvFile:
         timestamp = int(time.time())
         state = int(internet_on())
-        row = (csv_row_format + "\n") % (timestamp, state)
+        try:
+            row = (csv_row_format + "\n") % (timestamp, state)
+        except ValueError as error:
+            print "Invalid row format"
+            sys.exit()
 
         # output
         if should_output(state):
