@@ -40,11 +40,6 @@ while True:
     with open(log_path, 'a') as csvFile:
         timestamp = int(time.time())
         state = int(internet_on())
-        try:
-            row = (csv_row_format + "\n") % (timestamp, state)
-        except ValueError as error:
-            print "Invalid row format"
-            sys.exit()
 
         # output
         if should_output(state):
@@ -52,6 +47,12 @@ while True:
 
         # logging
         if should_log(state):
+            try:
+                row = (csv_row_format + "\n") % (timestamp, state)
+            except ValueError as error:
+                print "Invalid row format"
+                sys.exit()
+
             csvFile.write(row)
             csvFile.close()
 
