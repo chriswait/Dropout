@@ -23,7 +23,7 @@ def internet_on():
     try:
         conn.request("HEAD", "/")
         return True
-    except: return False
+    except Exception: return False
 
 def should_output(state): return ((output_all) or (output_changes and state != previous_state) or (output_failures and state == False))
 def should_log(state): return ((log_all) or (log_changes and state != previous_state) or (log_failures and state == False))
@@ -42,10 +42,12 @@ while True:
     if should_output(state): print state
     # logging
     if should_log(state):
-        with open(log_path, 'a') as csvFile:
-            try: row = (csv_row_format + "\n") % (timestamp, state)
-            except ValueError as error: error("Invalid row format")
-            csvFile.write(row)
-            csvFile.close()
+        try:
+            with open(log_path, 'a') as csv_file:
+                try: row = (csv_row_format + "\n") % (timestamp, state)
+                except ValueError as error: error("Invalid row format")
+                csv_file.write(row)
+                csv_file.close()
+        except Exception: error("Failed to open log file")
     if (previous_state != state): previous_state = state
     sleep(period)
