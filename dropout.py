@@ -1,7 +1,7 @@
 #!/usr/local/bin/python
-import httplib
-import time
-import sys
+from httplib import HTTPConnection
+from time import time, sleep
+from sys import exit
 # Configuration
 ## Network
 host = "www.google.com.au"
@@ -19,7 +19,7 @@ output_changes = False
 output_all = True
 
 def internet_on():
-    conn = httplib.HTTPConnection(host)
+    conn = HTTPConnection(host)
     try:
         conn.request("HEAD", "/")
         return True
@@ -30,13 +30,13 @@ def should_log(state): return ((log_all) or (log_changes and state != previous_s
 
 def error(message):
     print "Error: " + message
-    sys.exit()
+    exit()
 
 previous_state = None
 if (should_log(True) and not(log_path)): error("Logging enabled but no path set")
 
 while True:
-    timestamp = int(time.time())
+    timestamp = int(time())
     state = int(internet_on())
     # output
     if should_output(state): print state
@@ -48,4 +48,4 @@ while True:
             csvFile.write(row)
             csvFile.close()
     if (previous_state != state): previous_state = state
-    time.sleep(period)
+    sleep(period)
