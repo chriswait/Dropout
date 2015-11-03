@@ -3,6 +3,7 @@ import urllib2
 import httplib
 import time
 
+
 # Network
 host = "www.google.com.au"
 timeout_seconds = 5
@@ -20,6 +21,8 @@ output_failures = False
 output_changes = False
 output_all = True
 
+previous_state = None
+
 def internet_on():
     conn = httplib.HTTPConnection(host)
     try:
@@ -28,13 +31,12 @@ def internet_on():
     except:
         return False
 
-def should_output(state, previous_state):
+def should_output(state):
         return ((output_all) or (output_changes and state != previous_state) or (output_failures and state == False))
 
-def should_log(state, previous_state):
+def should_log(state):
         return ((log_all) or (log_changes and state != previous_state) or (log_failures and state == False))
 
-previous_state = None
 while True:
     with open(log_path, 'a') as csvFile:
         timestamp = int(time.time())
@@ -42,11 +44,11 @@ while True:
         row = (csv_row_format + "\n") % (timestamp, state)
 
         # output
-        if should_output(state, previous_state):
+        if should_output(state):
             print state
 
         # logging
-        if should_log(state, previous_state):
+        if should_log(state):
             csvFile.write(row)
             csvFile.close()
 
