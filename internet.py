@@ -13,7 +13,7 @@ log_path = 'log.csv'
 csv_row_format = "%i,%i"
 log_failures = False
 log_changes = False
-log_all = False
+log_all = True
 
 # Output
 output_failures = False
@@ -35,9 +35,14 @@ def should_output(state):
 
 def should_log(state):
     return ((log_all) or (log_changes and state != previous_state) or (log_failures and state == False))
+def error(message):
+    print "Error: " + message
+    sys.exit()
+
+if (should_log(True) and not(log_path)):
+    error("Logging enabled but no path set")
 
 while True:
-    with open(log_path, 'a') as csvFile:
         timestamp = int(time.time())
         state = int(internet_on())
 
@@ -47,14 +52,14 @@ while True:
 
         # logging
         if should_log(state):
-            try:
-                row = (csv_row_format + "\n") % (timestamp, state)
-            except ValueError as error:
-                print "Invalid row format"
-                sys.exit()
+            with open(log_path, 'a') as csvFile:
+                try:
+                    row = (csv_row_format + "\n") % (timestamp, state)
+                except ValueError as error:
+                    error("Invalid row format")
 
-            csvFile.write(row)
-            csvFile.close()
+                csvFile.write(row)
+                csvFile.close()
 
         if (previous_state != state): previous_state = state
         time.sleep(period)
